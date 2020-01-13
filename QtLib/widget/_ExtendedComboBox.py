@@ -8,14 +8,15 @@ __date__ = '2019-12-12 15:26:12'
 https://stackoverflow.com/questions/4827207/how-do-i-filter-the-pyqt-qcombobox-items-based-on-the-text-input
 """
 import sys
-from ..Qt import QtGui
-from ..Qt import QtCore
-from ..Qt import QtWidgets
+from .. import Qt
+from Qt import QtGui
+from Qt import QtCore
+from Qt import QtWidgets
 
 
-class ExtendedCombo( QtWidgets.QComboBox ):
+class ExtendedComboBox( QtWidgets.QComboBox ):
     def __init__( self,  parent = None):
-        super( ExtendedCombo, self ).__init__( parent )
+        super( ExtendedComboBox, self ).__init__( parent )
 
         self.setFocusPolicy( QtCore.Qt.StrongFocus )
         self.setEditable( True )
@@ -25,6 +26,7 @@ class ExtendedCombo( QtWidgets.QComboBox ):
         self.completer.setCompletionMode( QtWidgets.QCompleter.UnfilteredPopupCompletion )
         self.pFilterModel = QtCore.QSortFilterProxyModel( self )
         self.pFilterModel.setFilterCaseSensitivity( QtCore.Qt.CaseInsensitive )
+        self.pFilterModel.setSourceModel( QtGui.QStandardItemModel() )
 
         self.completer.setPopup( self.view() )
 
@@ -33,26 +35,43 @@ class ExtendedCombo( QtWidgets.QComboBox ):
         edit = self.lineEdit()
         # NOTE 取消按 Enter 生成新 item 的功能
         edit.returnPressed.disconnect()
-        # edit.returnPressed.connect(self.enter)
         edit.textEdited[unicode].connect( self.pFilterModel.setFilterFixedString )
         self.completer.activated.connect(self.setTextIfCompleterIsClicked)
 
-    # def enter(self):
-    #     print "enter"
-    #     # text = self.lineEdit().text()
-    #     # index = self.findText(text)
-    #     # self.setCurrentIndex(index)
-    #     # print text,index
+    def clear(self):
+        self.pFilterModel.setSourceModel( QtGui.QStandardItemModel() )
+        super(ExtendedComboBox,self).clear()
+
+    def addItems(self,texts):
+        super(ExtendedComboBox,self).addItems(texts)
+        for text in texts:
+            self.addItem(text)
+
+    def addItem(self,*args):
+        super(ExtendedComboBox,self).addItem(*args)
+        if len(args) == 2:
+            _,text = args
+        else:
+            text = args[0]
+        
+        model = self.pFilterModel.sourceModel()
+        
+        item = QtGui.QStandardItem(text)
+        model.setItem(model.rowCount(), item)
+
+        if self.completer.model() != self.pFilterModel:
+            self.completer.setModel(self.pFilterModel)
+
 
     def setModel( self, model ):
-        super(ExtendedCombo, self).setModel( model )
+        super(ExtendedComboBox, self).setModel( model )
         self.pFilterModel.setSourceModel( model )
         self.completer.setModel(self.pFilterModel)
 
     def setModelColumn( self, column ):
         self.completer.setCompletionColumn( column )
         self.pFilterModel.setFilterKeyColumn( column )
-        super(ExtendedCombo, self).setModelColumn( column )
+        super(ExtendedComboBox, self).setModelColumn( column )
 
 
     def view( self ):
@@ -65,18 +84,18 @@ class ExtendedCombo( QtWidgets.QComboBox ):
       if text:
         index = self.findText(text)
         self.setCurrentIndex(index)
-        print index
 
-def main():
+def test():
+
     app = QtWidgets.QApplication(sys.argv)
 
     model = QtGui.QStandardItemModel()
 
     for i,word in enumerate( ['hola', 'adios', 'hello', 'good bye'] ):
         item = QtGui.QStandardItem(word)
-        model.setItem(i, 0, item)
+        model.setItem(i, item)
 
-    combo = ExtendedCombo()
+    combo = ExtendedComboBox()
     combo.setModel(model)
     combo.setModelColumn(0)
 
@@ -85,4 +104,4 @@ def main():
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    main()
+    test()

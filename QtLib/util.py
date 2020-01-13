@@ -12,6 +12,8 @@ from Qt import QtGui
 from Qt import QtCore
 from Qt import QtWidgets
 
+# NOTE replaceWidget ----------------------------------------------------------------------------
+
 def replaceWidget(src,dst):
     u"""replaceWidget 替换组件
     
@@ -116,3 +118,25 @@ def getTargetLayoutIndex(layout,target):
             if layout:
                 return layout,i
         return [None,None]
+
+# NOTE traverseChildren ----------------------------------------------------------------------------
+
+def traverseChildren(parent,indent="",log=True):
+    """traverseChildren 
+    Traverse into the widget children | print the children hierarchy
+    
+    :param parent: traverse widget
+    :type parent: QWidget
+    :param indent: indentation space, defaults to ""
+    :type indent: str, optional
+    :param log: print the data, defaults to True
+    :type log: bool, optional
+    """        
+    if log:
+        print (indent + str(parent))
+        
+    if not hasattr(parent,"children"):
+        return
+
+    for child in parent.children():
+        traverseChildren(child,indent=indent+"    ")
