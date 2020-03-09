@@ -8,3 +8,12 @@ __version__ = '1.0.0'
 """
 QtLib for python
 """
+import os
+import sys
+DIR = os.path.dirname(__file__)
+
+try:
+    import Qt
+except ImportError:
+    sys.path.append(os.path.join(DIR,"_vendor"))
+    import Qt
