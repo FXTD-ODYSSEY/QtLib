@@ -8,3 +8,7 @@
 > &emsp;&emsp;后来讲过前辈的指点，开发一个 Python 库 才是一个最终的解决方案。    
 > &emsp;&emsp;然而后续的因为各种忙，这个开发方案就一拖再拖了。。。。。。    
 
+## todolist
+
+- [ ] 添加 pyqtConfig 库的功能，并且适当扩展其功能
+- [x] 点击 EventFilter 组件
