@@ -94,17 +94,9 @@ def createUIComponentToolBar(ControlName="CustomToolBar"):
     if cmds.workspaceControl(ControlName,ex=1):
         cmds.deleteUI(ControlName)
 
-    help_line = mayaToQT("HelpLine")
-    help_line.setObjectName("_HelpLine")
-
-    mel.eval("""
-    createUIComponentToolBar(
-            "HelpLine", localizedUIComponentLabel("%s"), "", $gWorkAreaForm, "top", false);
-    """ % ControlName)
-
-    UIComponentToolBar = mayaToQT("HelpLine")
+    # NOTE 利用大小写不同生成 Maya 内置的 UIComponentToolBar 组件
+    UIComponentToolBar = cmds.workspaceControl("HELPLINE")
     UIComponentToolBar.setObjectName(ControlName)
-    help_line.setObjectName("HelpLine")
     
     layout = UIComponentToolBar.layout()
     # NOTE add spacing
