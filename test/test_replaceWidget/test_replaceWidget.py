@@ -10,7 +10,7 @@ ui替换测试
 
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+sys.path.append(os.path.abspath(os.path.join(__file__,'..','..','..')))
 
 from QtLib import Qt
 from Qt import QtGui

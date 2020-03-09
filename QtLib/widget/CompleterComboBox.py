@@ -7,16 +7,14 @@ __date__ = '2019-12-12 15:26:12'
 """
 https://stackoverflow.com/questions/4827207/how-do-i-filter-the-pyqt-qcombobox-items-based-on-the-text-input
 """
-import sys
-from .. import Qt
 from Qt import QtGui
 from Qt import QtCore
 from Qt import QtWidgets
 
 
-class ExtendedComboBox( QtWidgets.QComboBox ):
+class QCompleterComboBox( QtWidgets.QComboBox ):
     def __init__( self,  parent = None):
-        super( ExtendedComboBox, self ).__init__( parent )
+        super( QCompleterComboBox, self ).__init__( parent )
 
         self.setFocusPolicy( QtCore.Qt.StrongFocus )
         self.setEditable( True )
@@ -40,15 +38,15 @@ class ExtendedComboBox( QtWidgets.QComboBox ):
 
     def clear(self):
         self.pFilterModel.setSourceModel( QtGui.QStandardItemModel() )
-        super(ExtendedComboBox,self).clear()
+        super(QCompleterComboBox,self).clear()
 
     def addItems(self,texts):
-        super(ExtendedComboBox,self).addItems(texts)
+        super(QCompleterComboBox,self).addItems(texts)
         for text in texts:
             self.addItem(text)
 
     def addItem(self,*args):
-        super(ExtendedComboBox,self).addItem(*args)
+        super(QCompleterComboBox,self).addItem(*args)
         if len(args) == 2:
             _,text = args
         else:
@@ -64,14 +62,14 @@ class ExtendedComboBox( QtWidgets.QComboBox ):
 
 
     def setModel( self, model ):
-        super(ExtendedComboBox, self).setModel( model )
+        super(QCompleterComboBox, self).setModel( model )
         self.pFilterModel.setSourceModel( model )
         self.completer.setModel(self.pFilterModel)
 
     def setModelColumn( self, column ):
         self.completer.setCompletionColumn( column )
         self.pFilterModel.setFilterKeyColumn( column )
-        super(ExtendedComboBox, self).setModelColumn( column )
+        super(QCompleterComboBox, self).setModelColumn( column )
 
 
     def view( self ):
@@ -87,7 +85,7 @@ class ExtendedComboBox( QtWidgets.QComboBox ):
 
 def test():
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication([])
 
     model = QtGui.QStandardItemModel()
 
@@ -95,13 +93,13 @@ def test():
         item = QtGui.QStandardItem(word)
         model.setItem(i, item)
 
-    combo = ExtendedComboBox()
+    combo = QCompleterComboBox()
     combo.setModel(model)
     combo.setModelColumn(0)
 
     combo.show()
 
-    sys.exit(app.exec_())
+    app.exec_()
 
 if __name__ == "__main__":
     test()
