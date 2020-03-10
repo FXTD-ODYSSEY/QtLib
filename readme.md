@@ -13,9 +13,9 @@
 - [ ] 第三方库调式
     - [x] 添加 Qt 库 - 兼容不同 python 的 Qt 库
     - [x] 添加 voluptuous 库 - 用于参数校验
-    - [ ] 添加 pyqtConfig 库 - 记录组件状态
-- [ ] 添加 pyqtConfig 库的功能，并且适当扩展其功能
-    - [ ] 添加 decorator 来快速遍历组件(组件用默认取名)
+    - [x] 添加 pyqtConfig 库 - 记录组件状态
+        - [x] 添加 decorator 来快速遍历组件(组件用 objectName 记录)
+    - [ ] 添加 dayu_widget 库 - AntDesign 前端组件库
 - [ ] Singal扩展
     - [x] 添加 鼠标点击signal - 扩展组件的 单击 、 双击 信号槽
     - [x] 添加 键盘触发signal - 扩展组件的 快捷键 信号槽

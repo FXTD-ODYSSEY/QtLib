@@ -12,9 +12,9 @@ from Qt import QtCore
 from Qt import QtWidgets
 
 
-class QCompleterComboBox( QtWidgets.QComboBox ):
+class ICompleterComboBox( QtWidgets.QComboBox ):
     def __init__( self,  parent = None):
-        super( QCompleterComboBox, self ).__init__( parent )
+        super( ICompleterComboBox, self ).__init__( parent )
 
         self.setFocusPolicy( QtCore.Qt.StrongFocus )
         self.setEditable( True )
@@ -38,15 +38,15 @@ class QCompleterComboBox( QtWidgets.QComboBox ):
 
     def clear(self):
         self.pFilterModel.setSourceModel( QtGui.QStandardItemModel() )
-        super(QCompleterComboBox,self).clear()
+        super(ICompleterComboBox,self).clear()
 
     def addItems(self,texts):
-        super(QCompleterComboBox,self).addItems(texts)
+        super(ICompleterComboBox,self).addItems(texts)
         for text in texts:
             self.addItem(text)
 
     def addItem(self,*args):
-        super(QCompleterComboBox,self).addItem(*args)
+        super(ICompleterComboBox,self).addItem(*args)
         if len(args) == 2:
             _,text = args
         else:
@@ -62,14 +62,14 @@ class QCompleterComboBox( QtWidgets.QComboBox ):
 
 
     def setModel( self, model ):
-        super(QCompleterComboBox, self).setModel( model )
+        super(ICompleterComboBox, self).setModel( model )
         self.pFilterModel.setSourceModel( model )
         self.completer.setModel(self.pFilterModel)
 
     def setModelColumn( self, column ):
         self.completer.setCompletionColumn( column )
         self.pFilterModel.setFilterKeyColumn( column )
-        super(QCompleterComboBox, self).setModelColumn( column )
+        super(ICompleterComboBox, self).setModelColumn( column )
 
 
     def view( self ):
@@ -93,7 +93,7 @@ def test():
         item = QtGui.QStandardItem(word)
         model.setItem(i, item)
 
-    combo = QCompleterComboBox()
+    combo = ICompleterComboBox()
     combo.setModel(model)
     combo.setModelColumn(0)
 

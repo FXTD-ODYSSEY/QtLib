@@ -1,2 +1,2 @@
-from FlowLayout import QFlowLayout
-from BorderLayout import QBorderLayout
+from FlowLayout import IFlowLayout
+from BorderLayout import IBorderLayout

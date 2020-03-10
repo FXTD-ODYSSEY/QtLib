@@ -12,9 +12,10 @@ import sys
 from functools import partial
 from Qt import QtCore, QtGui, QtWidgets
 
-class QMouseClickSignal(QtCore.QObject):
-    """QMouseClickSignal 监听鼠标点击信号
+class IMouseClickSignal(QtCore.QObject):
+    """IMouseClickSignal 监听鼠标点击信号
     """
+    
     # NOTE 点击事件
     LClicked   = QtCore.Signal(QtCore.QEvent)
     DLClicked  = QtCore.Signal(QtCore.QEvent)
@@ -35,7 +36,7 @@ class QMouseClickSignal(QtCore.QObject):
     X2Released = QtCore.Signal(QtCore.QEvent)
 
     def __init__(self,widget):
-        super(QMouseClickSignal,self).__init__()
+        super(IMouseClickSignal,self).__init__()
         self.setParent(widget)
 
         self.releaseSingal = {
@@ -78,7 +79,7 @@ def test():
 
     label = QtWidgets.QLabel("Click Test")
 
-    mouseSignal = QMouseClickSignal(label)
+    mouseSignal = IMouseClickSignal(label)
     mouseSignal.LClicked.connect(lambda e:sys.stdout.write("left click\n"))
     mouseSignal.LReleased.connect(lambda e:sys.stdout.write("left release\n"))
     mouseSignal.DLClicked.connect(lambda e:sys.stdout.write("double left click\n"))

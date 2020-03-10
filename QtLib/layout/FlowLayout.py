@@ -57,9 +57,9 @@ https://github.com/pyside/pyside2-examples/blob/dev/examples/widgets/layouts/flo
 
 from Qt import QtCore, QtGui, QtWidgets
 
-class QFlowLayout(QtWidgets.QLayout):
+class IFlowLayout(QtWidgets.QLayout):
     def __init__(self, parent=None, margin=0, spacing=-1):
-        super(QFlowLayout, self).__init__(parent)
+        super(IFlowLayout, self).__init__(parent)
 
         if parent is not None:
             self.setMargin(margin)
@@ -102,7 +102,7 @@ class QFlowLayout(QtWidgets.QLayout):
         return height
 
     def setGeometry(self, rect):
-        super(QFlowLayout, self).setGeometry(rect)
+        super(IFlowLayout, self).setGeometry(rect)
         self.doLayout(rect, False)
 
     def sizeHint(self):
@@ -147,7 +147,7 @@ def test():
     app = QtWidgets.QApplication(sys.argv)
     mainWin = QtWidgets.QWidget()
     mainWin.setWindowTitle("Flow Layout")
-    flowLayout = QFlowLayout()
+    flowLayout = IFlowLayout()
     flowLayout.addWidget(QtWidgets.QPushButton("Short"))
     flowLayout.addWidget(QtWidgets.QPushButton("Longer"))
     flowLayout.addWidget(QtWidgets.QPushButton("Different text"))

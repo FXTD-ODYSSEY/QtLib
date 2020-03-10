@@ -13,7 +13,7 @@ from Qt import QtWidgets
 
 from voluptuous import Schema,Required
 from types import FunctionType
-class QCollapsibleWidget( object ):
+class ICollapsibleWidget( object ):
     config_schema = Schema({
         Required('duration', default=300): int,
         Required('toggle_mark', default=True): bool,
@@ -24,7 +24,7 @@ class QCollapsibleWidget( object ):
     @staticmethod
     def install(btn,container,config={}):
         
-        config = QCollapsibleWidget.config_schema(config)
+        config = ICollapsibleWidget.config_schema(config)
         duration = config.get("duration")
         toggle_mark = config.get("toggle_mark")
         expand_callback = config.get("expand_callback")
@@ -45,7 +45,7 @@ class QCollapsibleWidget( object ):
                 btn.toggle = False
                 anim.setDirection(QtCore.QAbstractAnimation.Forward)
 
-                anim.setEndValue(QCollapsibleWidget.getHeightEndValue(container))
+                anim.setEndValue(ICollapsibleWidget.getHeightEndValue(container))
                 anim.start()
                 if toggle_mark:
                     btn.setText(u"▼%s"%btn.text()[1:])
@@ -106,7 +106,7 @@ def test():
 
     layout.addWidget(container)
 
-    QCollapsibleWidget.install(button,container,{"toggle_mark":False})
+    ICollapsibleWidget.install(button,container,{"toggle_mark":False})
     
     window.show()
 

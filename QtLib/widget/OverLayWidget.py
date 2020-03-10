@@ -13,7 +13,7 @@ from Qt import QtWidgets
 from Qt import QtCore
 from voluptuous import Schema,Required
 
-class QOverLayWidget(QtWidgets.QWidget):
+class IOverLayWidget(QtWidgets.QWidget):
 
     config_schema = Schema({
         Required('transparent', default=True): bool,
@@ -30,7 +30,7 @@ class QOverLayWidget(QtWidgets.QWidget):
     })
 
     def __init__(self, parent,config={}):
-        super(QOverLayWidget,self).__init__(parent)
+        super(IOverLayWidget,self).__init__(parent)
         config = self.config_schema(config)
         transparent = config.get("transparent")
         if transparent:
@@ -87,7 +87,7 @@ class QOverLayWidget(QtWidgets.QWidget):
 def test():
     app = QtWidgets.QApplication([])
     button = QtWidgets.QPushButton("click")
-    frame = QOverLayWidget(button)
+    frame = IOverLayWidget(button)
     frame.hide()
     button.clicked.connect(lambda:frame.setVisible(not frame.isVisible()))
     button.show()

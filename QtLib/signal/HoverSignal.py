@@ -10,15 +10,15 @@ __date__ = '2020-03-09 17:50:25'
 import sys
 from Qt import QtCore, QtGui, QtWidgets
 
-class QHoverSignal(QtCore.QObject):
-    """QHoverSignal 监听键盘输入事件
+class IHoverSignal(QtCore.QObject):
+    """IHoverSignal 监听键盘输入事件
     """
     entered = QtCore.Signal(QtCore.QEvent)
     leaved = QtCore.Signal(QtCore.QEvent)
     moved = QtCore.Signal(QtCore.QEvent)
    
     def __init__(self,widget):
-        super(QHoverSignal,self).__init__()
+        super(IHoverSignal,self).__init__()
         widget.installEventFilter(self)
 
     def eventFilter(self,reciever,event):
@@ -44,7 +44,7 @@ def test():
     layout.addWidget(label)
     layout.addWidget(button)
 
-    signal = QHoverSignal(button)
+    signal = IHoverSignal(button)
     signal.entered.connect(lambda:sys.stdout.write("entered\n"))
     signal.leaved.connect(lambda:sys.stdout.write("leaved\n"))
     # signal.moved.connect(lambda:sys.stdout.write("moved\n"))

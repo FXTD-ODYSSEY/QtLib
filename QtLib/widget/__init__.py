@@ -1,3 +1,3 @@
-from CompleterComboBox import QCompleterComboBox
-from CollapsibleWidget import QCollapsibleWidget
-from OverLayWidget import QOverLayWidget
+from CompleterComboBox import ICompleterComboBox
+from CollapsibleWidget import ICollapsibleWidget
+from OverLayWidget import IOverLayWidget

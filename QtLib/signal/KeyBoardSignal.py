@@ -12,8 +12,8 @@ from functools import partial
 from Qt import QtCore, QtGui, QtWidgets
 from voluptuous import Schema,Required
 
-class QKeyBoardSignal(QtCore.QObject):
-    """QKeyBoardSignal 监听键盘输入信号
+class IKeyBoardSignal(QtCore.QObject):
+    """IKeyBoardSignal 监听键盘输入信号
     """
     pressed = QtCore.Signal(QtCore.QEvent)
     released = QtCore.Signal(QtCore.QEvent)
@@ -21,7 +21,7 @@ class QKeyBoardSignal(QtCore.QObject):
         Required('focus', default=True): bool,
     })
     def __init__(self,widget,key,config={}):
-        super(QKeyBoardSignal,self).__init__()
+        super(IKeyBoardSignal,self).__init__()
 
         self.config = self.config_schema(config)
 
@@ -58,10 +58,10 @@ def test():
     layout.addWidget(label)
     layout.addWidget(button)
 
-    ESignal = QKeyBoardSignal(label,"left",config={'focus':True})
+    ESignal = IKeyBoardSignal(label,"left",config={'focus':True})
     ESignal.pressed.connect(lambda:sys.stdout.write("Ctrl + E\n"))
 
-    TSignal = QKeyBoardSignal(button," Ctrl + T ")
+    TSignal = IKeyBoardSignal(button," Ctrl + T ")
     TSignal.pressed.connect(lambda:sys.stdout.write("Ctrl + T\n"))
 
     container.show()

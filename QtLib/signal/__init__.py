@@ -1,3 +1,3 @@
-from MouseClickSignal import QMouseClickSignal
-from KeyBoardSignal import QKeyBoardSignal
-from HoverSignal import QHoverSignal
+from MouseClickSignal import IMouseClickSignal
+from KeyBoardSignal import IKeyBoardSignal
+from HoverSignal import IHoverSignal

@@ -32,12 +32,12 @@ class ItemWrapper(object):
         self.position = p
 
 
-class QBorderLayout(QtWidgets.QLayout):
+class IBorderLayout(QtWidgets.QLayout):
     West, North, South, East, Center = range(5)
     MinimumSize, SizeHint = range(2)
 
     def __init__(self, parent=None, margin=0, spacing=-1):
-        super(QBorderLayout, self).__init__(parent)
+        super(IBorderLayout, self).__init__(parent)
 
         self.setContentsMargins(margin, margin, margin, margin)
         self.setSpacing(spacing)
@@ -49,7 +49,7 @@ class QBorderLayout(QtWidgets.QLayout):
             l = self.takeAt(0)
 
     def addItem(self, item):
-        self.add(item, QBorderLayout.West)
+        self.add(item, IBorderLayout.West)
 
     def addWidget(self, widget, position):
         self.add(QtWidgets.QWidgetItem(widget), position)
@@ -70,7 +70,7 @@ class QBorderLayout(QtWidgets.QLayout):
         return None
 
     def minimumSize(self):
-        return self.calculateSize(QBorderLayout.MinimumSize)
+        return self.calculateSize(IBorderLayout.MinimumSize)
 
     def setGeometry(self, rect):
         center = None
@@ -80,19 +80,19 @@ class QBorderLayout(QtWidgets.QLayout):
         southHeight = 0
         centerHeight = 0
 
-        super(QBorderLayout, self).setGeometry(rect)
+        super(IBorderLayout, self).setGeometry(rect)
 
         for wrapper in self.list:
             item = wrapper.item
             position = wrapper.position
 
-            if position == QBorderLayout.North:
+            if position == IBorderLayout.North:
                 item.setGeometry(QtCore.QRect(rect.x(), northHeight,
                         rect.width(), item.sizeHint().height()))    
 
                 northHeight += item.geometry().height() + self.spacing()
 
-            elif position == QBorderLayout.South:
+            elif position == IBorderLayout.South:
                 item.setGeometry(QtCore.QRect(item.geometry().x(),
                         item.geometry().y(), rect.width(),
                         item.sizeHint().height()))
@@ -103,7 +103,7 @@ class QBorderLayout(QtWidgets.QLayout):
                         rect.y() + rect.height() - southHeight + self.spacing(),
                         item.geometry().width(), item.geometry().height()))
 
-            elif position == QBorderLayout.Center:
+            elif position == IBorderLayout.Center:
                 center = wrapper
 
         centerHeight = rect.height() - northHeight - southHeight
@@ -112,13 +112,13 @@ class QBorderLayout(QtWidgets.QLayout):
             item = wrapper.item
             position = wrapper.position
 
-            if position == QBorderLayout.West:
+            if position == IBorderLayout.West:
                 item.setGeometry(QtCore.QRect(rect.x() + westWidth,
                         northHeight, item.sizeHint().width(), centerHeight))    
 
                 westWidth += item.geometry().width() + self.spacing()
 
-            elif position == QBorderLayout.East:
+            elif position == IBorderLayout.East:
                 item.setGeometry(QtCore.QRect(item.geometry().x(),
                         item.geometry().y(), item.sizeHint().width(),
                         centerHeight))
@@ -134,7 +134,7 @@ class QBorderLayout(QtWidgets.QLayout):
                     rect.width() - eastWidth - westWidth, centerHeight))
 
     def sizeHint(self):
-        return self.calculateSize(QBorderLayout.SizeHint)
+        return self.calculateSize(IBorderLayout.SizeHint)
 
     def takeAt(self, index):
         if index >= 0 and index < len(self.list):
@@ -153,15 +153,15 @@ class QBorderLayout(QtWidgets.QLayout):
             position = wrapper.position
             itemSize = QtCore.QSize()
 
-            if sizeType == QBorderLayout.MinimumSize:
+            if sizeType == IBorderLayout.MinimumSize:
                 itemSize = wrapper.item.minimumSize()
             else: # sizeType == BorderLayout.SizeHint
                 itemSize = wrapper.item.sizeHint()
 
-            if position in (QBorderLayout.North, QBorderLayout.South, QBorderLayout.Center):
+            if position in (IBorderLayout.North, IBorderLayout.South, IBorderLayout.Center):
                 totalSize.setHeight(totalSize.height() + itemSize.height())
 
-            if position in (QBorderLayout.West, QBorderLayout.East, QBorderLayout.Center):
+            if position in (IBorderLayout.West, IBorderLayout.East, IBorderLayout.Center):
                 totalSize.setWidth(totalSize.width() + itemSize.width())
 
         return totalSize
@@ -174,27 +174,27 @@ class Window(QtWidgets.QWidget):
         centralWidget = QtWidgets.QTextBrowser()
         centralWidget.setPlainText("Central widget")
 
-        layout = QBorderLayout()
-        layout.addWidget(centralWidget, QBorderLayout.Center)
+        layout = IBorderLayout()
+        layout.addWidget(centralWidget, IBorderLayout.Center)
 
         # Because BorderLayout doesn't call its super-class addWidget() it
         # doesn't take ownership of the widgets until setLayout() is called.
         # Therefore we keep a local reference to each label to prevent it being
         # garbage collected too soon.
         label_n = self.createLabel("North")
-        layout.addWidget(label_n, QBorderLayout.North)
+        layout.addWidget(label_n, IBorderLayout.North)
 
         label_w = self.createLabel("West")
-        layout.addWidget(label_w, QBorderLayout.West)
+        layout.addWidget(label_w, IBorderLayout.West)
 
         label_e1 = self.createLabel("East 1")
-        layout.addWidget(label_e1, QBorderLayout.East)
+        layout.addWidget(label_e1, IBorderLayout.East)
 
         label_e2 = self.createLabel("East 2")
-        layout.addWidget(label_e2, QBorderLayout.East)
+        layout.addWidget(label_e2, IBorderLayout.East)
 
         label_s = self.createLabel("South")
-        layout.addWidget(label_s, QBorderLayout.South)
+        layout.addWidget(label_s, IBorderLayout.South)
 
         self.setLayout(layout)
 
