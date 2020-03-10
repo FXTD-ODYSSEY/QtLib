@@ -11,12 +11,25 @@ from Qt import QtGui
 from Qt import QtCore
 from Qt import QtWidgets
 
-class QCollapsibleWidget( QtCore.QObject ):
-    def __init__(self):
-        super( QCollapsibleWidget, self ).__init__()
-        
+from voluptuous import Schema,Required
+from types import FunctionType
+class QCollapsibleWidget( object ):
+    config_schema = Schema({
+        Required('duration', default=300): int,
+        Required('toggle_mark', default=True): bool,
+        'expand_callback' :FunctionType,
+        'collapse_callback': FunctionType,
+    })
+
     @staticmethod
-    def install(btn,container,duration=300,expand_callback=None,collapse_callback=None):
+    def install(btn,container,config={}):
+        
+        config = QCollapsibleWidget.config_schema(config)
+        duration = config.get("duration")
+        toggle_mark = config.get("toggle_mark")
+        expand_callback = config.get("expand_callback")
+        collapse_callback = config.get("collapse_callback")
+
         anim = QtCore.QPropertyAnimation(container, "maximumHeight")
         
         anim.setDuration(duration)
@@ -25,7 +38,8 @@ class QCollapsibleWidget( QtCore.QObject ):
         anim.finished.connect(lambda:container.setMaximumHeight(16777215) if not btn.toggle else None)
 
         btn.toggle = False
-        btn.setText(u"▼ %s"%btn.text())
+        if toggle_mark:
+            btn.setText(u"▼ %s"%btn.text())
         def toggleFn(btn,anim):
             if btn.toggle:
                 btn.toggle = False
@@ -33,7 +47,8 @@ class QCollapsibleWidget( QtCore.QObject ):
 
                 anim.setEndValue(QCollapsibleWidget.getHeightEndValue(container))
                 anim.start()
-                btn.setText(u"▼%s"%btn.text()[1:])
+                if toggle_mark:
+                    btn.setText(u"▼%s"%btn.text()[1:])
                 btn.setStyleSheet('font:normal')
                 if expand_callback:
                     expand_callback()
@@ -42,8 +57,9 @@ class QCollapsibleWidget( QtCore.QObject ):
                 anim.setDirection(QtCore.QAbstractAnimation.Backward)
                 anim.setEndValue(container.sizeHint().height())
                 anim.start()
-                btn.setText(u"■%s"%btn.text()[1:])
-                btn.setStyleSheet('font:bold')
+                if toggle_mark:
+                    btn.setText(u"■%s"%btn.text()[1:])
+                    btn.setStyleSheet('font:bold')
                 if collapse_callback:
                     collapse_callback()
 
@@ -90,7 +106,7 @@ def test():
 
     layout.addWidget(container)
 
-    QCollapsibleWidget.install(button,container)
+    QCollapsibleWidget.install(button,container,{"toggle_mark":False})
     
     window.show()
 

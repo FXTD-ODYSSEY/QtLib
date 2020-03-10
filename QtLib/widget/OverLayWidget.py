@@ -5,18 +5,34 @@ __email__ =  '820472580@qq.com'
 __date__ = '2020-03-09 17:13:54'
 
 """
-
+覆盖绘制组件
 """
 
 from Qt import QtGui
 from Qt import QtWidgets
 from Qt import QtCore
+from voluptuous import Schema,Required
 
 class QOverLayWidget(QtWidgets.QWidget):
 
+    config_schema = Schema({
+        Required('transparent', default=True): bool,
+        Required('border', default=True): bool,
+        Required('border_color', default=QtGui.QColor(255, 0, 0, 255) ): QtGui.QColor,
+        Required('border_line', default=QtCore.Qt.SolidLine ): QtCore.Qt.PenStyle,
+        Required('border_cap', default=QtCore.Qt.RoundCap ): QtCore.Qt.PenCapStyle,
+        Required('border_round', default=QtCore.Qt.RoundJoin ): QtCore.Qt.PenJoinStyle,
+        Required('border_bevel', default=15): int,
+        'border_pen': QtGui.QPen,
+        Required('rect', default=False): bool,
+        Required('rect_color', default=QtGui.QColor(0, 255, 0, 125)  ): QtGui.QColor,
+        Required('rect_bevel', default=15): int,
+    })
+
     def __init__(self, parent,config={}):
         super(QOverLayWidget,self).__init__(parent)
-        transparent = config.get("transparent") if config.get("transparent") else True
+        config = self.config_schema(config)
+        transparent = config.get("transparent")
         if transparent:
             self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
             self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
@@ -37,23 +53,22 @@ class QOverLayWidget(QtWidgets.QWidget):
         rectF = QtCore.QRectF(2, 2, self.width()-4, height)
         
         # NOTE 绘制边界颜色
-        border = self.config.get("border") if self.config.get("border") else True
-        if border:
-            border_color = self.config.get("border_color") if self.config.get("border_color") else QtGui.QColor(255, 0, 0, 255) 
-            border_line = self.config.get("border_line") if self.config.get("border_line") else QtCore.Qt.SolidLine
-            border_cap = self.config.get("border_cap") if self.config.get("border_cap") else QtCore.Qt.RoundCap
-            border_round = self.config.get("border_round") if self.config.get("border_round") else QtCore.Qt.RoundJoin
-            border_bevel = self.config.get("border_bevel") if self.config.get("border_bevel") else 15
-            border_pen = self.config.get("border_pen") if self.config.get("border_pen") else False
-                
+        if self.config.get("border"):
+            border_color = self.config.get("border_color")     
+            border_line = self.config.get("border_line")       
+            border_cap = self.config.get("border_cap")         
+            border_round = self.config.get("border_round")     
+            border_bevel = self.config.get("border_bevel")     
+            border_pen = self.config.get("border_pen")         
+            
             rectPath.addRoundedRect(rectF, border_bevel, border_bevel)
             painter.setPen(border_pen if border_pen else QtGui.QPen(border_color, 2, border_line ,border_cap, border_round))
             painter.drawPath(rectPath)
 
-        rect = self.config.get("rect") if self.config.get("rect") else True
+        rect = self.config.get("rect")
         if rect:
-            rect_color = self.config.get("rect_color") if self.config.get("rect_color") else QtGui.QColor(0, 255, 0, 125) 
-            rect_bevel = self.config.get("rect_bevel") if self.config.get("rect_bevel") else 15
+            rect_color = self.config.get("rect_color")
+            rect_bevel = self.config.get("rect_bevel")
             # NOTE 绘制背景颜色
             painter.setBrush(rect_color)
             painter.drawRoundedRect(rectF, rect_bevel, rect_bevel)
