@@ -5,5 +5,6 @@ from QtLib.signal import MouseClickSignal
 from QtLib.signal import KeyBoardSignal
 from QtLib.signal import HoverSignal
 
-HoverSignal.test()
+MouseClickSignal.test()
+# HoverSignal.test()
 # KeyBoardSignal.test()
