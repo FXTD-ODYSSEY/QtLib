@@ -1,2 +1,3 @@
 from MouseClickSignal import QMouseClickSignal
 from KeyBoardSignal import QKeyBoardSignal
+from HoverSignal import QHoverSignal
