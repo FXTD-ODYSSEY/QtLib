@@ -5,6 +5,7 @@ from QtLib.widget import CompleterComboBox
 from QtLib.widget import CollapsibleWidget
 from QtLib.widget import OverLayWidget
 
+# CollapsibleWidget.test()
 OverLayWidget.test()
 # ExtendedComboBox.test()
 # CompleterComboBox.test()

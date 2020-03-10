@@ -12,7 +12,9 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(__file__,'..','..','..')))
 
-from QtLib import Qt
+from QtLib.util import replaceWidget
+from QtLib.util import traverseChildren
+
 from Qt import QtGui
 from Qt import QtCore
 from Qt import QtWidgets
@@ -21,7 +23,7 @@ from Qt.QtCompat import QFileDialog
 from Qt.QtCompat import wrapInstance
 
 # from QtLib import util
-from QtLib.util import replaceWidget
+
 
 class AnimSpliterWindow(QtWidgets.QWidget):
     """
@@ -43,7 +45,7 @@ def main():
 
     window = AnimSpliterWindow()
     window.show()
-
+    traverseChildren(window,indent=4)
     sys.exit(app.exec_())
 
 if __name__ == "__main__":

@@ -13,17 +13,22 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(__file__,"..","..")))
 
 from QtLib.config import ConfigManager
+from QtLib.config import setAutoConfig
 from Qt.QtGui import *
 from Qt.QtCore import *
 from Qt.QtWidgets import *
 
 class MainWindow(QMainWindow):
+    CONFIG = ConfigManager()
 
+    def show_config(self):
+        self.current_config_output.setText(str(self.CONFIG.as_dict()))
+
+    @setAutoConfig(CONFIG)
     def __init__(self):
         super(MainWindow, self).__init__()
 
         self.setWindowTitle('PyQtConfig Demo')
-        self.config = ConfigManager()
 
         CHOICE_A = 1
         CHOICE_B = 2
@@ -37,36 +42,41 @@ class MainWindow(QMainWindow):
             'Choice D': CHOICE_D,
         }
 
-        self.config.set_defaults({
-            'number': 13,
-            'text': 'hello',
-            'active': True,
-            'combo': CHOICE_C,
-        })
+        # self.config.set_defaults({
+        #     'number': 13,
+        #     'text': 'hello',
+        #     'active': True,
+        #     'combo': CHOICE_C,
+        # })
 
         gd = QGridLayout()
 
         sb = QSpinBox()
         gd.addWidget(sb, 0, 1)
-        self.config.add_handler('number', sb)
+        sb.setObjectName("number")
+        # self.config.add_handler('number', sb)
 
         te = QLineEdit()
         gd.addWidget(te, 1, 1)
-        self.config.add_handler('text', te)
+        te.setObjectName("text")
+        te.setText("yes")
+        # self.config.add_handler('text', te)
 
         cb = QCheckBox()
         gd.addWidget(cb, 2, 1)
-        self.config.add_handler('active', cb)
+        cb.setObjectName("active")
+        # self.config.add_handler('active', cb)
 
         cmb = QComboBox()
         cmb.addItems(map_dict.keys())
         gd.addWidget(cmb, 3, 1)
-        self.config.add_handler('combo', cmb, mapper=map_dict)
+        cmb.setObjectName("combo")
+        # self.config.add_handler('combo', cmb, mapper=map_dict)
 
         self.current_config_output = QTextEdit()
         gd.addWidget(self.current_config_output, 0, 3, 3, 1)
 
-        self.config.updated.connect(self.show_config)
+        self.CONFIG.updated.connect(self.show_config)
 
         self.show_config()
 
@@ -74,15 +84,18 @@ class MainWindow(QMainWindow):
         self.window.setLayout(gd)
         self.setCentralWidget(self.window)
 
-    def show_config(self):
-        self.current_config_output.setText(str(self.config.as_dict()))
+    
+def test():
+        
+    # Create a Qt application
+    app = QApplication(sys.argv)
+    app.setOrganizationName("PyQtConfig")
+    app.setOrganizationDomain("martinfitzpatrick.name")
+    app.setApplicationName("PyQtConfig")
 
-# Create a Qt application
-app = QApplication(sys.argv)
-app.setOrganizationName("PyQtConfig")
-app.setOrganizationDomain("martinfitzpatrick.name")
-app.setApplicationName("PyQtConfig")
+    w = MainWindow()
+    w.show()
+    app.exec_()  # Enter Qt application main loop
 
-w = MainWindow()
-w.show()
-app.exec_()  # Enter Qt application main loop
+if __name__ == "__main__":
+    test()
