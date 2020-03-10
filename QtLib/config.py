@@ -1,5 +1,6 @@
 # coding:utf-8
 from __future__ import unicode_literals
+from __future__ import print_function
 
 __author__ =  'timmyliang'
 __email__ =  '820472580@qq.com'
@@ -8,7 +9,6 @@ __date__ = '2020-03-09 16:19:41'
 """
 基于 pyqtConfig 库进行修改的 | 实现组件状态的记录以及导入和导出
 github 原仓库 https://github.com/learnpyqt/pyqtconfig
-- [ ] 添加 Decorator 自动抓取组件记录
 """
 
 
@@ -1008,3 +1008,39 @@ class QSettingsManager(ConfigManagerBase):
     def _set(self, key, value):
         with QMutexLocker(self.mutex):
             self.settings.setValue(key, value)
+
+# NOTE -----------------------------------------
+
+from functools import wraps
+from functools import partial
+from .util import traverseChildren
+
+
+def setAutoConfig(CONFIG=None,callback=None):
+    """setAutoConfig Debug 装饰器
+    """
+
+    # NOTE 跳过 QWidget 集成的 Widget (否则会递归进里面的组件)
+    QWidget_list = [QDesktopWidget,  QComboBox, QCalendarWidget, QAbstractButton, QPushButton, QCommandLinkButton, QCheckBox, QWizardPage,  QLineEdit,QToolButton, QFrame, QToolBox, QAbstractScrollArea, QGraphicsView, QAbstractItemView, QTreeView, QTreeWidget, QHeaderView, QTableView, QTableWidget, QColumnView, QListView, QUndoView, QListWidget, QToolBar, QRubberBand, QTabWidget, QStatusBar, QTabBar, QStackedWidget, QSplitterHandle, QAbstractSlider, QSlider, QDial, QSplitter, QAbstractSpinBox, QDateTimeEdit, QTimeEdit, QDateEdit, QSplashScreen, QDoubleSpinBox, QSpinBox, QSizeGrip, QScrollBar, QScrollArea, QRadioButton, QProgressBar, QDialog, QFileDialog, QWizard, QProgressDialog, QFontDialog, QMessageBox, QInputDialog, QErrorMessage, QColorDialog, QPlainTextEdit, QTextEdit, QTextBrowser, QMenuBar, QMenu, QMdiSubWindow, QMdiArea, QMainWindow, QLCDNumber, QLabel, QGroupBox, QFontComboBox, QFocusFrame, QDockWidget,  QDialogButtonBox]
+
+    def childCallback(self,child,traverse_func):
+        if type(child) not in HOOKS and type(child) not in QWidget_list: 
+            traverse_func()
+            return
+            
+        key = child.objectName()
+        if not key : return
+        
+        if type(CONFIG) == ConfigManager:
+            CONFIG.add_handler(key, child)
+
+    def getParam(func):
+        @wraps(func)
+        def wrapper(self,*args, **kwargs):
+            args = func(self,*args, **kwargs)
+
+            traverseChildren(self,childCallback=partial(childCallback,self))
+            if callable(callback):callback()
+            return args
+        return wrapper
+    return getParam
