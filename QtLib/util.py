@@ -1,4 +1,5 @@
 # coding:utf-8
+from __future__ import print_function
 
 __author__ =  'timmyliang'
 __email__ =  '820472580@qq.com'
@@ -33,7 +34,7 @@ def replaceWidget(src,dst):
     layout = src.parent().layout()
     layout,index = getTargetLayoutIndex(layout,src)
     if not layout:
-        print u"没有找到 %s 的 Layout，替换失败" % src
+        print (u"没有找到 %s 的 Layout，替换失败" % src)
         return src
 
     layout.insertWidget(index,dst)
@@ -121,7 +122,7 @@ def getTargetLayoutIndex(layout,target):
 
 # NOTE traverseChildren ----------------------------------------------------------------------------
 
-def traverseChildren(parent,indent="",log=True):
+def traverseChildren(parent,childCallback=None,printCallback=None,indent=4,prefix="",log=False):
     """traverseChildren 
     Traverse into the widget children | print the children hierarchy
     
@@ -129,14 +130,22 @@ def traverseChildren(parent,indent="",log=True):
     :type parent: QWidget
     :param indent: indentation space, defaults to ""
     :type indent: str, optional
-    :param log: print the data, defaults to True
+    :param log: print the data, defaults to False
     :type log: bool, optional
-    """        
-    if log:
-        print (indent + str(parent))
+    """
+
+    if callable(printCallback):
+        printCallback(prefix,parent)
+    elif log:
+        print (prefix,parent)
         
     if not hasattr(parent,"children"):
         return
 
+    prefix = "".join([" " for _ in range(indent)]) + prefix
     for child in parent.children():
-        traverseChildren(child,indent=indent+"    ")
+        traverse_func = lambda:traverseChildren(child,indent=indent,prefix=prefix,childCallback=childCallback,printCallback=printCallback,log=log)
+        if callable(childCallback) : 
+            childCallback(child,traverse_func)
+        else:
+            traverse_func()
