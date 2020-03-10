@@ -12,8 +12,4 @@ import os
 import sys
 DIR = os.path.dirname(__file__)
 
-try:
-    import Qt
-except ImportError:
-    sys.path.append(os.path.join(DIR,"_vendor"))
-    import Qt
+sys.path.insert(0,os.path.join(DIR,"_vendor"))
