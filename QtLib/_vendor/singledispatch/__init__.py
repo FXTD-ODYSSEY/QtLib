@@ -1,0 +1,1 @@
+from singledispatch import singledispatch
