@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
             'Choice D': CHOICE_D,
         }
 
-        # self.config.set_defaults({
+        # self.CONFIG.set_defaults({
         #     'number': 13,
         #     'text': 'hello',
         #     'active': True,
@@ -54,24 +54,29 @@ class MainWindow(QMainWindow):
         sb = QSpinBox()
         gd.addWidget(sb, 0, 1)
         sb.setObjectName("number")
-        # self.config.add_handler('number', sb)
+        # self.CONFIG.add_handler('number', sb)
 
         te = QLineEdit()
         gd.addWidget(te, 1, 1)
         te.setObjectName("text")
         te.setText("yes")
-        # self.config.add_handler('text', te)
+        # self.CONFIG.add_handler('text', te)
 
         cb = QCheckBox()
         gd.addWidget(cb, 2, 1)
         cb.setObjectName("active")
-        # self.config.add_handler('active', cb)
+        # self.CONFIG.add_handler('active', cb)
 
         cmb = QComboBox()
         cmb.addItems(map_dict.keys())
         gd.addWidget(cmb, 3, 1)
         cmb.setObjectName("combo")
-        # self.config.add_handler('combo', cmb, mapper=map_dict)
+
+        cmb = QComboBox()
+        cmb.addItems(map_dict.keys())
+        gd.addWidget(cmb, 4, 1)
+        # cmb.setObjectName("combo")
+        self.CONFIG.add_handler('combo', cmb, mapper=map_dict)
 
         self.current_config_output = QTextEdit()
         gd.addWidget(self.current_config_output, 0, 3, 3, 1)

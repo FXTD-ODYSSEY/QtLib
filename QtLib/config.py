@@ -1009,7 +1009,7 @@ class QSettingsManager(ConfigManagerBase):
         with QMutexLocker(self.mutex):
             self.settings.setValue(key, value)
 
-# NOTE -----------------------------------------
+# NOTE 添加装饰器 -----------------------------------------
 
 from functools import wraps
 from functools import partial

@@ -12,9 +12,9 @@ from maya import cmds
 from maya import mel 
 from maya import OpenMayaUI
 
-from PySide2 import QtGui
-from PySide2 import QtCore
-from PySide2 import QtWidgets
+from Qt import QtGui
+from Qt import QtCore
+from Qt import QtWidgets
 from Qt.QtCompat import wrapInstance
 
 # NOTE Qt <-> Maya ----------------------------------------------------------------------------
