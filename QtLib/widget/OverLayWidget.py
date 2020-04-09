@@ -11,28 +11,13 @@ __date__ = '2020-03-09 17:13:54'
 from Qt import QtGui
 from Qt import QtWidgets
 from Qt import QtCore
-from voluptuous import Schema,Required
 
 class IOverLayWidget(QtWidgets.QWidget):
-
-    config_schema = Schema({
-        Required('transparent', default=True): bool,
-        Required('border', default=True): bool,
-        Required('border_color', default=QtGui.QColor(255, 0, 0, 255) ): QtGui.QColor,
-        Required('border_line', default=QtCore.Qt.SolidLine ): QtCore.Qt.PenStyle,
-        Required('border_cap', default=QtCore.Qt.RoundCap ): QtCore.Qt.PenCapStyle,
-        Required('border_round', default=QtCore.Qt.RoundJoin ): QtCore.Qt.PenJoinStyle,
-        Required('border_bevel', default=15): int,
-        'border_pen': QtGui.QPen,
-        Required('rect', default=False): bool,
-        Required('rect_color', default=QtGui.QColor(0, 255, 0, 125)  ): QtGui.QColor,
-        Required('rect_bevel', default=15): int,
-    })
 
     def __init__(self, parent,config={}):
         super(IOverLayWidget,self).__init__(parent)
         config = self.config_schema(config)
-        transparent = config.get("transparent")
+        transparent = config.get("transparent",True)
         if transparent:
             self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
             self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
@@ -53,12 +38,12 @@ class IOverLayWidget(QtWidgets.QWidget):
         rectF = QtCore.QRectF(2, 2, self.width()-4, height)
         
         # NOTE 绘制边界颜色
-        if self.config.get("border"):
-            border_color = self.config.get("border_color")     
-            border_line = self.config.get("border_line")       
-            border_cap = self.config.get("border_cap")         
-            border_round = self.config.get("border_round")     
-            border_bevel = self.config.get("border_bevel")     
+        if self.config.get("border",True):
+            border_color = self.config.get("border_color",QtGui.QColor(255, 0, 0, 255))     
+            border_line = self.config.get("border_line",QtCore.Qt.SolidLine )       
+            border_cap = self.config.get("border_cap",QtCore.Qt.RoundCap)         
+            border_round = self.config.get("border_round",QtCore.Qt.RoundJoin)     
+            border_bevel = self.config.get("border_bevel",15)     
             border_pen = self.config.get("border_pen")         
             
             rectPath.addRoundedRect(rectF, border_bevel, border_bevel)
@@ -67,8 +52,8 @@ class IOverLayWidget(QtWidgets.QWidget):
 
         rect = self.config.get("rect")
         if rect:
-            rect_color = self.config.get("rect_color")
-            rect_bevel = self.config.get("rect_bevel")
+            rect_color = self.config.get("rect_color",QtGui.QColor(0, 255, 0, 125))
+            rect_bevel = self.config.get("rect_bevel",15)
             # NOTE 绘制背景颜色
             painter.setBrush(rect_color)
             painter.drawRoundedRect(rectF, rect_bevel, rect_bevel)

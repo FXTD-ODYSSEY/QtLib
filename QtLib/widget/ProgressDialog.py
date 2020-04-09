@@ -11,7 +11,7 @@ __date__ = '2020-03-09 17:13:54'
 from Qt import QtGui
 from Qt import QtWidgets
 from Qt import QtCore
-import traceback
+
 class IProgressDialog(QtWidgets.QProgressDialog):
     u'''
     ProgressDialog 进度条窗口
@@ -79,6 +79,7 @@ class IProgressDialog(QtWidgets.QProgressDialog):
             try:
                 yield item  # with body executes here
             except:
+                import traceback
                 traceback.print_exc()
                 self.deleteLater()
             # self.exec_()

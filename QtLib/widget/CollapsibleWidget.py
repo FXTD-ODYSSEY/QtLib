@@ -22,11 +22,12 @@ class ICollapsibleWidget( object ):
     })
 
     @staticmethod
-    def install(btn,container,config={}):
+    def install(btn,container,config=None):
         
         config = ICollapsibleWidget.config_schema(config)
-        duration = config.get("duration")
-        toggle_mark = config.get("toggle_mark")
+        config = config if type(config) is dict else {}
+        duration = config.get("duration",300)
+        toggle_mark = config.get("toggle_mark",True)
         expand_callback = config.get("expand_callback")
         collapse_callback = config.get("collapse_callback")
 

@@ -10,20 +10,17 @@ __date__ = '2020-03-09 17:50:25'
 import sys
 from functools import partial
 from Qt import QtCore, QtGui, QtWidgets
-from voluptuous import Schema,Required
 
 class IKeyBoardSignal(QtCore.QObject):
     """IKeyBoardSignal 监听键盘输入信号
     """
     pressed = QtCore.Signal(QtCore.QEvent)
     released = QtCore.Signal(QtCore.QEvent)
-    config_schema = Schema({
-        Required('focus', default=True): bool,
-    })
-    def __init__(self,widget,key,config={}):
+
+    def __init__(self,widget,key,config=None):
         super(IKeyBoardSignal,self).__init__()
 
-        self.config = self.config_schema(config)
+        self.config = config if type(config) is dict else {}
 
         widget.installEventFilter(self)
 
@@ -39,7 +36,7 @@ class IKeyBoardSignal(QtCore.QObject):
             KeySequence = QtGui.QKeySequence(event.key()+int(event.modifiers()))
             if KeySequence == QtGui.QKeySequence(self.key):
                 self.released.emit(event)
-        elif event.type() == QtCore.QEvent.MouseButtonPress and self.config.get('focus'):
+        elif event.type() == QtCore.QEvent.MouseButtonPress and self.config.get('focus',True):
             if not reciever.hasFocus():
                 reciever.setFocus()
 

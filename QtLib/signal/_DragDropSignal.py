@@ -10,24 +10,18 @@ __date__ = '2020-03-09 17:50:25'
 import sys
 from functools import partial
 from Qt import QtCore, QtGui, QtWidgets
-from voluptuous import Schema,Required
 
 class QDragDropSignal(QtCore.QObject):
     """QDragDropSignal 监听键盘输入事件
     """
     pressed = QtCore.Signal()
     released = QtCore.Signal()
-    config_schema = Schema({
-        Required('focus', default=True): bool,
-    })
-    def __init__(self,widget,config={}):
+
+    def __init__(self,widget,config=None):
         super(QDragDropSignal,self).__init__()
 
-        config = self.config_schema(config)
+        config = config if type(config) is dict else {}
 
-        # NOTE 点击添加 focus 事件 | 用于触发键盘事件
-        widget.dragMoveEvent = partial(self.dragMoveEvent ,widget.dragMoveEvent)
-        
         self.widget = widget
 
     def eventFilter(self,reciever,event):
