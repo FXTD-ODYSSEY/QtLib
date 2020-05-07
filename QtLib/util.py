@@ -6,35 +6,36 @@ __email__ =  '820472580@qq.com'
 __date__ = '2019-12-12 20:09:01'
 
 """
-调用库
+util library
 """
 
 from Qt import QtGui
 from Qt import QtCore
 from Qt import QtWidgets
 
+import time
+from functools import partial, wraps
+from contextlib import contextmanager
+
 # NOTE replaceWidget ----------------------------------------------------------------------------
 
 def replaceWidget(src,dst):
-    u"""replaceWidget 替换组件
+    """replaceWidget 
+    replace widget, typeically use for the QtDesigner widget replace to the Custorm widget
+
+    :param src: source widget
+    :type src: QWidget
+    :param dst: target widget
+    :type dst: QWidget
+    :return: target widget
+    :rtype: QWidget
+    """    
     
-    Parameters
-    ----------
-    src : QWidget
-        源组件
-    dst : QWidget
-        目标组件
-    
-    Returns
-    -------
-    QWidget
-        [description]
-    """
     updateWidgetState(src,dst)
     layout = src.parent().layout()
     layout,index = getTargetLayoutIndex(layout,src)
     if not layout:
-        print (u"没有找到 %s 的 Layout，替换失败" % src)
+        print ("Could not find %s Layout" % src)
         return src
 
     layout.insertWidget(index,dst)
@@ -43,15 +44,15 @@ def replaceWidget(src,dst):
     return dst
 
 def updateWidgetState(src,dst):
-    u"""updateWidgetState 同步组件状态
-    
-    Parameters
-    ----------
-    src : QWidget
-        源组件
-    dst : QWidget
-        目标组件
-    """
+    """updateWidgetState 
+    sync widget attribute
+
+    :param src: source widget
+    :type src: QWidget
+    :param dst: target widget
+    :type dst: QWidget
+    """    
+
     if src.acceptDrops()           : dst.setAcceptDrops(src.acceptDrops())
     if src.accessibleDescription() : dst.setAccessibleDescription(src.accessibleDescription())
     if src.backgroundRole()        : dst.setBackgroundRole(src.backgroundRole())
@@ -92,22 +93,17 @@ def updateWidgetState(src,dst):
 
 
 def getTargetLayoutIndex(layout,target):
-    u"""getTargetLayoutIndex 获取目标 Layout 和 序号
+    """getTargetLayoutIndex 
+    get the layout and index, interally use with replaceWidget function
+
+    :param layout: input QLayout
+    :type layout: QLayout
+    :param target: input QWidget
+    :type target: QWidget
+    :return: layout , index
+    :rtype: [QLayout,int]
+    """        
     
-    Parameters
-    ----------
-    layout : QLayout 
-        通过 QLayout 递归遍历下属的组件
-    target : QWidget
-        要查询的组件
-    
-    Returns
-    -------
-    layout : QLayout
-        查询组件所在的 Layout
-    i : int
-        查询组件所在的 Layout 的序号
-    """
     count = layout.count()
     for i in range(count):
         item = layout.itemAt(i).widget()
@@ -149,3 +145,26 @@ def traverseChildren(parent,childCallback=None,printCallback=None,indent=4,prefi
             childCallback(child,traverse_func)
         else:
             traverse_func()
+
+# NOTE logTime ----------------------------------------------------------------------------
+
+def logTime(func=None, msg="elapsed time:"):
+    """logTime 
+    log function running time
+
+    :param func: function get from decorators, defaults to None
+    :type func: function, optional
+    :param msg: default print message, defaults to "elapsed time:"
+    :type msg: str, optional
+    :return: decorator function return
+    :rtype: dynamic type
+    """            
+    if not func:
+        return partial(logTime,msg=msg)
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        curr = time.time()
+        res = func(*args, **kwargs)
+        print(msg,time.time() - curr)
+        return res
+    return wrapper

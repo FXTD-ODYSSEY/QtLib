@@ -88,7 +88,7 @@ class IProgressDialog(QtWidgets.QProgressDialog):
 
 def test():
     app = QtWidgets.QApplication([])
-    button = QtWidgets.QPushButton("click")
+    button = QtWidgets.QPushButton("click to popup the ProgressWindow")
     button.clicked.connect(lambda:[i for i in IProgressDialog.loop(range(999000),parent=button)])
     button.show()
     app.exec_()

@@ -16,7 +16,6 @@ class IOverLayWidget(QtWidgets.QWidget):
 
     def __init__(self, parent,config={}):
         super(IOverLayWidget,self).__init__(parent)
-        config = self.config_schema(config)
         transparent = config.get("transparent",True)
         if transparent:
             self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
@@ -71,7 +70,7 @@ class IOverLayWidget(QtWidgets.QWidget):
 
 def test():
     app = QtWidgets.QApplication([])
-    button = QtWidgets.QPushButton("click")
+    button = QtWidgets.QPushButton("Click to toggle the Overlay Effect")
     frame = IOverLayWidget(button)
     frame.hide()
     button.clicked.connect(lambda:frame.setVisible(not frame.isVisible()))

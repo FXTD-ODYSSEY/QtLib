@@ -7,15 +7,19 @@ __date__ = '2020-01-13 10:52:09'
 """
 Get Maya Window
 """
+import os
+import sys
+repo = (lambda f:lambda p=__file__:f(f,p))(lambda f,p: p if [d for d in os.listdir(p if os.path.isdir(p) else os.path.dirname(p)) if d == '.git'] else None if os.path.dirname(p) == p else f(f,os.path.dirname(p)))()
+MODULE = os.path.join(repo,'_vendor','Qt')
+sys.path.insert(0,MODULE) if MODULE not in sys.path else None
+
 
 from maya import cmds 
 from maya import mel 
 from maya import OpenMayaUI
 
-from Qt import QtGui
-from Qt import QtCore
-from Qt import QtWidgets
-from Qt.QtCompat import wrapInstance
+from Qt import QtGui, QtWidgets, QtCore
+from Qt.QtCompat import wrapInstance,getCppPointer
 
 # NOTE Qt <-> Maya ----------------------------------------------------------------------------
 
@@ -45,7 +49,7 @@ def qtToMaya(widget):
     """
     return OpenMayaUI.MQtUtil.fullName(
         long(
-            shiboken.getCppPointer(widget)[0]
+            getCppPointer(widget)[0]
         ) 
     )
     
@@ -68,7 +72,7 @@ def mayaMenu():
     :rtype: QMenuBar
     """
     for m in mayaWindow().children():
-        if type(m) == QMenuBar:
+        if type(m) == QtWidgets.QMenuBar:
             return m
 
 def getStatusLine():

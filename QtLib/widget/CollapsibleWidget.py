@@ -7,24 +7,19 @@ __date__ = '2019-12-12 15:26:12'
 """
 https://stackoverflow.com/questions/4827207/how-do-i-filter-the-pyqt-qcombobox-items-based-on-the-text-input
 """
-from Qt import QtGui
-from Qt import QtCore
-from Qt import QtWidgets
+import os
+import sys
+repo = (lambda f:lambda p=__file__:f(f,p))(lambda f,p: p if [d for d in os.listdir(p if os.path.isdir(p) else os.path.dirname(p)) if d == 'QtLib'] else None if os.path.dirname(p) == p else f(f,os.path.dirname(p)))()
+MODULE = os.path.join(repo,'QtLib','_vendor','Qt')
+sys.path.insert(0,MODULE) if MODULE not in sys.path else None
 
-from voluptuous import Schema,Required
-from types import FunctionType
+from Qt import QtGui, QtWidgets, QtCore
+
 class ICollapsibleWidget( object ):
-    config_schema = Schema({
-        Required('duration', default=300): int,
-        Required('toggle_mark', default=True): bool,
-        'expand_callback' :FunctionType,
-        'collapse_callback': FunctionType,
-    })
 
-    @staticmethod
-    def install(btn,container,config=None):
+    @classmethod
+    def install(cls,btn,container,config=None):
         
-        config = ICollapsibleWidget.config_schema(config)
         config = config if type(config) is dict else {}
         duration = config.get("duration",300)
         toggle_mark = config.get("toggle_mark",True)
@@ -46,7 +41,7 @@ class ICollapsibleWidget( object ):
                 btn.toggle = False
                 anim.setDirection(QtCore.QAbstractAnimation.Forward)
 
-                anim.setEndValue(ICollapsibleWidget.getHeightEndValue(container))
+                anim.setEndValue(cls.getHeightEndValue(container))
                 anim.start()
                 if toggle_mark:
                     btn.setText(u"▼%s"%btn.text()[1:])
@@ -64,7 +59,7 @@ class ICollapsibleWidget( object ):
                 if collapse_callback:
                     collapse_callback()
 
-        func = lambda x:toggleFn(btn,anim)
+        func = lambda *args:toggleFn(btn,anim)
         btn.clicked.connect(func)
         return func
 

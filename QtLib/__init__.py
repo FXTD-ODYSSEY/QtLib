@@ -11,5 +11,9 @@ QtLib for python
 import os
 import sys
 DIR = os.path.dirname(__file__)
+vendor_path = os.path.join(DIR,"_vendor")
+sys.path.extend([os.path.join(vendor_path,folder) for folder in os.listdir(vendor_path)])
 
-sys.path.insert(0,os.path.join(DIR,"_vendor"))
+import Qt
+import dayu_widgets
+import singledispatch
