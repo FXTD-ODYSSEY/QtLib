@@ -1,0 +1,12 @@
+[submodule "QtLib/_vendor/Qt"]
+	path = QtLib/_vendor/Qt
+	url = git@github.com:mottosso/Qt.py.git
+[submodule "QtLib/_vendor/dayu_widgets"]
+	path = QtLib/_vendor/dayu_widgets
+	url = git@github.com:phenom-films/dayu_widgets.git
+[submodule "QtLib/_vendor/dayu_path"]
+	path = QtLib/_vendor/dayu_path
+	url = git@github.com:phenom-films/dayu_path.git
+[submodule "QtLib/_vendor/singledispatch"]
+	path = QtLib/_vendor/singledispatch
+	url = git@github.com:ambv/singledispatch.git
