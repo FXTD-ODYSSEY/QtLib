@@ -1,9 +1,10 @@
 # coding:utf-8
+from __future__ import division,print_function
 
 __author__ =  'timmyliang'
 __email__ =  '820472580@qq.com'
-__date__ = '2020-01-13 15:01:18'
-__version__ = '1.0.0'
+__date__ = '2020-05-07 09:23:32'
+__version__ = '1.0.1'
 
 """
 QtLib for python

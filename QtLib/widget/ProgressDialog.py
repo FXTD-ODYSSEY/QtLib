@@ -31,17 +31,13 @@ class IProgressDialog(QtWidgets.QProgressDialog):
     Arguments:
         QProgressDialog {QProgressDialog} -- Qt 进度条窗口类
     '''
-    def __init__(self, label=u"进度",button_text=u"取消",minimum=0,maximum=100,parent=None,title=""):
+    def __init__(self, status=u"进度",button_text=u"取消",minimum=0,maximum=100,parent=None,title=""):
 
         super(IProgressDialog, self).__init__(parent)
 
         self.setWindowModality(QtCore.Qt.WindowModal)
-        
-        if title == "":
-            self.setWindowTitle(label)
-        else:
-            self.setWindowTitle(title)
-        self.setLabelText("%s..."%label)
+        self.setWindowTitle(status if title else title)
+        self.setLabelText(status)
         self.setCancelButtonText(button_text)
         self.setRange(minimum,maximum)
         self.show()
