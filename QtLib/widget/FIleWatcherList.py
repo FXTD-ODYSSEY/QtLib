@@ -1,8 +1,8 @@
 # coding:utf-8
-from __future__ import unicode_literals,division,print_function
+from __future__ import absolute_import, division, print_function
 
-__author__ =  'timmyliang'
-__email__ =  '820472580@qq.com'
+__author__ = 'timmyliang'
+__email__ = '820472580@qq.com'
 __date__ = '2020-05-22 21:07:36'
 
 """
@@ -12,16 +12,15 @@ import os
 import sys
 import json
 import shutil
+import inspect
 import hashlib
 import tempfile
 import traceback
-from functools import partial
-
 try:
     from Qt import QtGui
     from Qt import QtCore
     from Qt import QtWidgets
-    from Qt.QtCompat import wrapInstance,QFileDialog
+    from Qt.QtCompat import wrapInstance, QFileDialog
 except:
     from PySide2 import QtGui
     from PySide2 import QtCore
@@ -31,45 +30,46 @@ except:
 
 from ProgressDialog import IProgressDialog
 
+
 class FileListWidget(QtWidgets.QListWidget):
 
-    def __init__(self, parent , fileFilter=None):
+    def __init__(self, parent, file_filter=None):
         super(FileListWidget, self).__init__(parent)
         self.watcher = parent
-        self.fileFilter = fileFilter
-        
+        self.file_filter = file_filter
+
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
-        
+
         self.setAcceptDrops(True)
 
-    def dragEnterEvent(self,event):
+    def dragEnterEvent(self, event):
         u'''
         dragEnterEvent 文件拖拽的进入事件
-        
+
         # Note https://stackoverflow.com/questions/4151637/pyqt4-drag-and-drop-files-into-qlistwidget
         参考上述网址的 drag and drop 实现文件拖拽加载效果
-        
+
         Arguments:
             event {QDragEnterEvent} --  dropEnterEvent 固定的事件参数
-        
+
         '''
         if event.mimeData().hasUrls():
             event.accept()
         else:
             event.ignore()
 
-    def dropEvent(self,event):
+    def dropEvent(self, event):
         u'''
         dropEvent 拖拽文件添加item
-        
+
         # Note https://stackoverflow.com/questions/4151637/pyqt4-drag-and-drop-files-into-qlistwidget
         参考上述网址的 drag and drop 实现文件拖拽加载效果
-        
+
         Arguments:
             event {QDropEvent} -- dropEvent 固定的事件参数
-        
+
         '''
         # Note 获取拖拽文件的地址
         if event.mimeData().hasUrls:
@@ -77,26 +77,26 @@ class FileListWidget(QtWidgets.QListWidget):
             event.accept()
             for url in event.mimeData().urls():
                 path = (url.toLocalFile())
-                _,ext = os.path.splitext(path)
+                _, ext = os.path.splitext(path)
                 # Note 过滤已有的路径
-                if ext in self.fileFilter or "*" in self.fileFilter:
+                if ext.lower() in self.file_filter or "*" in self.file_filter:
                     self.watcher.addItem(path)
-            
+
             self.watcher.saveJson()
-            
+
         else:
             event.ignore()
 
-    def dragMoveEvent(self,event):
+    def dragMoveEvent(self, event):
         u'''
         dragMoveEvent 文件拖拽的移动事件
-        
+
         # Note https://stackoverflow.com/questions/4151637/pyqt4-drag-and-drop-files-into-qlistwidget
         参考上述网址的 drag and drop 实现图片拖拽加载效果
-        
+
         Arguments:
             event {QDragMoveEvent} --  dragMoveEvent 固定的事件参数
-        
+
         '''
         if event.mimeData().hasUrls:
             event.setDropAction(QtCore.Qt.CopyAction)
@@ -109,32 +109,38 @@ class FileListWidget(QtWidgets.QListWidget):
     #     if not self.findItems(_item, QtCore.Qt.MatchContains):
     #         super(FileListWidget,self).addItem(item)
 
+
 class IFileWatcherList(QtWidgets.QWidget):
 
     old_md5_data = {}
     new_md5_data = {}
 
-    def __init__(self,jsonName=None,fileFilter=None,excludeArray=None,getCurrentCallback=None):
+    def __init__(self, json_name=None, file_filter=None, get_directory_button=u'获取文件目录路径', get_file_button=u'获取文件', exclude_array=None, get_current_callback=None):
         super(IFileWatcherList, self).__init__()
-        
-        self.jsonName = jsonName if jsonName else "%s.json" % self.__class__.__name__
-        self.fileFilter = fileFilter if isinstance(fileFilter,list) else ["*"]
-        self.File_List = FileListWidget(self,self.fileFilter)
+
+        file_name = inspect.currentframe().f_back.f_code.co_filename
+        md5 = self.getMD5(file_name)
+        self.json_name = json_name if json_name else "%s_%s.json" % (
+            self.__class__.__name__, md5)
+
+        self.file_filter = file_filter if isinstance(
+            file_filter, list) else ["*"]
+        self.File_List = FileListWidget(self, self.file_filter)
         self.File_List.customContextMenuRequested.connect(
             self.fileItemRightClickEvent)
-        
-        self.Root_BTN = QtWidgets.QPushButton(u'获取文件目录路径', self)
+
+        self.Root_BTN = QtWidgets.QPushButton(get_directory_button, self)
         self.Root_BTN.clicked.connect(self.handleSetDirectory)
-        self.File_BTN = QtWidgets.QPushButton(u'获取文件', self)
+        self.File_BTN = QtWidgets.QPushButton(get_file_button, self)
         self.File_BTN.clicked.connect(self.getFile)
 
         self.Button_Layout = QtWidgets.QHBoxLayout()
         self.Button_Layout.addWidget(self.Root_BTN)
         self.Button_Layout.addWidget(self.File_BTN)
-        
-        if callable(getCurrentCallback):
+
+        if callable(get_current_callback):
             self.Current_BTN = QtWidgets.QPushButton(u'获取当前打开的文件', self)
-            self.Current_BTN.clicked.connect(partial(getCurrentCallback,self.File_List))
+            self.Current_BTN.clicked.connect(get_current_callback)
             self.Button_Layout.addWidget(self.Current_BTN)
 
         self.Main_Layout = QtWidgets.QVBoxLayout()
@@ -151,10 +157,8 @@ class IFileWatcherList(QtWidgets.QWidget):
         self.timer.setInterval(500)
         self.timer.timeout.connect(self.handleTimer)
 
-        self.Exclude_Array = {".history", ".git", ".vscode"} if not isinstance(excludeArray,set) else excludeArray
-
-        # NOTE 添加启动的路径为搜索路径
-        self.handleSetDirectory(directory=os.path.dirname(__file__))
+        self.Exclude_Array = {".history", ".git", ".vscode"} if not isinstance(
+            exclude_array, set) else exclude_array
 
         # NOTE 添加 UI
         self.setLayout(QtWidgets.QVBoxLayout())
@@ -173,7 +177,6 @@ class IFileWatcherList(QtWidgets.QWidget):
         remove_action.triggered.connect(self.fileRemoveItem)
         clear_action = QtWidgets.QAction(u'清空全部', self)
         clear_action.triggered.connect(self.itemClear)
-        
 
         self.menu.addAction(open_file_action)
         self.menu.addSeparator()
@@ -182,34 +185,34 @@ class IFileWatcherList(QtWidgets.QWidget):
         self.menu.popup(QtGui.QCursor.pos())
 
     def saveJson(self):
-        
+
         data = {
-            "path_list":[self.File_List.item(i).toolTip() for i in range(self.File_List.count())],
+            "path_list": [self.File_List.item(i).toolTip() for i in range(self.File_List.count())],
         }
 
-        json_path = os.path.join(tempfile.gettempdir(),self.jsonName)
+        json_path = os.path.join(tempfile.gettempdir(), self.json_name)
 
-        with open(json_path,'w') as f:
+        with open(json_path, 'w') as f:
             # json.dump(data,f,ensure_ascii=False)
-            json.dump(data,f)
-        
+            json.dump(data, f)
+
     def loadJson(self):
 
-        json_path = os.path.join(tempfile.gettempdir(),self.jsonName)
+        json_path = os.path.join(tempfile.gettempdir(), self.json_name)
 
         # if not os.path.exists(json_path):
         #     return
 
         try:
-            with open(json_path,'r') as f:
-                data = json.load(f,encoding="utf-8")
+            with open(json_path, 'r') as f:
+                data = json.load(f, encoding="utf-8")
         except:
-            os.remove(json_path)
-            return
-        
-        for path in data["path_list"]:
-            self.addItem(path)
-    
+            if os.path.exists(json_path):
+                os.remove(json_path)
+        else:
+            for path in data["path_list"]:
+                self.addItem(path)
+
     def itemClear(self):
         self.File_List.clear()
         self.saveJson()
@@ -236,7 +239,7 @@ class IFileWatcherList(QtWidgets.QWidget):
         for path in path_list:
             self.addItem(path)
 
-    def addItem(self,path):
+    def addItem(self, path):
         _, file_name = os.path.split(path)
         matches = self.File_List.findItems(file_name, QtCore.Qt.MatchExactly)
         if not matches:
@@ -289,11 +292,11 @@ class IFileWatcherList(QtWidgets.QWidget):
                 if len(check) > 0:
                     continue
 
-                for item in IProgressDialog.loop(files,title=root,status=root):
-                    file_name,ext = os.path.splitext(item)
-                    if ext in self.fileFilter or "*" in self.fileFilter:
+                for item in IProgressDialog.loop(files, title=root, status=root):
+                    _, ext = os.path.splitext(item)
+                    if ext.lower() in self.file_filter or "*" in self.file_filter:
                         file_path = os.path.join(root, item).replace("\\", "/")
-                        hash_value = self.get_md5(file_path)
+                        hash_value = self.getMD5(file_path)
                         self.new_md5_data[file_path] = hash_value
 
                         # Note 检查文件是否存在，如果不存在则添加新的路径
@@ -308,9 +311,8 @@ class IFileWatcherList(QtWidgets.QWidget):
                         else:
                             self.old_md5_data[file_path] = hash_value
                             self.addItem(file_path)
-                            self.saveJson()
 
-
+        self.saveJson()
         # Note 检查文件是否被删除，被删除的从列表中去掉
         if len(self.new_md5_data) != len(self.old_md5_data):
             delete_list = []
@@ -326,22 +328,22 @@ class IFileWatcherList(QtWidgets.QWidget):
                 del self.old_md5_data[key]
             self.saveJson()
 
+    def getMD5(self, file_path):
+        # NOTE https://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
+        md5_hash = hashlib.md5()
+        with open(file_path, "rb") as f:
+            # Read and update hash in chunks of 4K
+            for byte_block in iter(lambda: f.read(4096), b""):
+                md5_hash.update(byte_block)
+        return md5_hash.hexdigest()
 
-    def get_md5(self, file_path):
-        BLOCKSIZE = 65536
-        hl = hashlib.md5()
-        with open(file_path, 'r') as f:
-            buf = f.read(BLOCKSIZE)
-            while len(buf) > 0:
-                hl.update(buf)
-                buf = f.read(BLOCKSIZE)
-        return hl.hexdigest()
 
 def test():
     app = QtWidgets.QApplication([])
-    watcher = IFileWatcherList(fileFilter=["*"])
+    watcher = IFileWatcherList(file_filter=[".ma", ".mb"])
     watcher.show()
     app.exec_()
+
 
 if __name__ == "__main__":
     test()
