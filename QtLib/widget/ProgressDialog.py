@@ -5,7 +5,7 @@ __email__ =  '820472580@qq.com'
 __date__ = '2020-03-09 17:13:54'
 
 """
-覆盖绘制组件
+进度条组件
 """
 
 from Qt import QtGui
@@ -13,33 +13,15 @@ from Qt import QtWidgets
 from Qt import QtCore
 
 class IProgressDialog(QtWidgets.QProgressDialog):
-    u'''
-    ProgressDialog 进度条窗口
-    
-    进度条窗口
-    使用参考:
-        progress_dialog = ProgressDialog(u"获取插件列表", u"取消", 0, len(list))
-        for i,item in enumerate(list):
-            
-            # for 循环逻辑代码
-            
-            progress_dialog.setValue(i+1)
-            if progress_dialog.wasCanceled():
-                break
-            progress_dialog.setLabelText(u"状态改变")
-    
-    Arguments:
-        QProgressDialog {QProgressDialog} -- Qt 进度条窗口类
-    '''
     def __init__(self, status=u"进度",button_text=u"取消",minimum=0,maximum=100,parent=None,title=""):
-
         super(IProgressDialog, self).__init__(parent)
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
         self.setWindowModality(QtCore.Qt.WindowModal)
         self.setWindowTitle(status if title else title)
         self.setLabelText(status)
         self.setCancelButtonText(button_text)
         self.setRange(minimum,maximum)
+        self.setValue(minimum)
         self.show()
         self.delay()
 
@@ -68,9 +50,8 @@ class IProgressDialog(QtWidgets.QProgressDialog):
     def loop(cls,seq,**kwargs):
         self = cls(**kwargs)
         self.setMaximum(len(seq))
-        for i,item in enumerate(seq):
+        for i,item in enumerate(seq,1):
 
-            self.setValue(i+1)
             if self.wasCanceled():break
             try:
                 yield item  # with body executes here
@@ -78,7 +59,7 @@ class IProgressDialog(QtWidgets.QProgressDialog):
                 import traceback
                 traceback.print_exc()
                 self.deleteLater()
-            # self.exec_()
+            self.setValue(i)
         self.deleteLater()
     
 
