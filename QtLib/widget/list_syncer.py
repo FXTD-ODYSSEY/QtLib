@@ -11,6 +11,9 @@ __author__ = 'timmyliang'
 __email__ = '820472580@qq.com'
 __date__ = '2020-06-01 21:00:16'
 
+from Qt import QtGui,QtWidgets,QtCore
+from functools import partial
+
 class ListSyncer(object):
     protected = False
 
